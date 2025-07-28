@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Résultats{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <h2 class="mb-4 text-center">📊 Résultats de l’analyse</h2>
+
+        {% if task == 'classification' %}
+            {% if accuracy %}
+            <div class="alert alert-success text-center">
+                ✅ Précision du modèle : <strong>{{ accuracy }}%</strong>
+            </div>
+
+            <h4>📈 Rapport de classification</h4>
+            <pre>{{ report | tojson(indent=2) }}</pre>
+
+            <h4>🧩 Matrice de confusion</h4>
+            <img src="{{ url_for('static', filename='plots/confusion_matrix.png') }}" alt="Matrice de confusion" class="img-fluid mb-4">
+
+            {% if matrix %}
+            <table class="table table-bordered text-center">
+                {% for row in matrix %}
+                    <tr>
+                        {% for val in row %}
+                            <td>{{ val }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </table>
+            {% endif %}
+
+            <h4>🔥 Importance des variables</h4>
+            <img src="{{ url_for('static', filename='plots/feature_importance.png') }}" alt="Importance des variables" class="img-fluid">
+
+            {% else %}
+            <p>Aucun résultat disponible.</p>
+            {% endif %}
+
+        {% elif task == 'regression' %}
+            {% if mse is not none %}
+            <div class="alert alert-info text-center">
+                📉 Erreur quadratique moyenne (MSE) : <strong>{{ mse }}</strong>
+            </div>
+
+            <div class="alert alert-success text-center">
+                🎯 Score R² : <strong>{{ r2 }}</strong>
+            </div>
+
+            <h4>📉 Nuage de points Réel vs Prédit</h4>
+            <img src="{{ url_for('static', filename='plots/regression_scatter.png') }}" alt="Scatter Réel vs Prédit" class="img-fluid">
+
+            {% else %}
+            <p>Aucun résultat disponible.</p>
+            {% endif %}
+        {% else %}
+            <p>⚠️ Aucun résultat disponible pour l’instant.</p>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

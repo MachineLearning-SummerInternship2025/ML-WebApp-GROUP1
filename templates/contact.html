@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Contact{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container px-lg-5">
+        <div class="p-4 bg-light rounded-3">
+            <h2 class="mb-4 text-center">📬 Contactez-nous</h2>
+
+            <form method="POST">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Nom :</label>
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Votre nom" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email :</label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="votre@email.com" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="message" class="form-label">Message :</label>
+                    <textarea class="form-control" id="message" name="message" rows="5" placeholder="Votre message ici..." required></textarea>
+                </div>
+
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">📨 Envoyer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Dataset{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container px-lg-5">
+        <div class="p-4 bg-light rounded-3">
+            <h2 class="mb-4 text-center">📊 Importer votre Dataset</h2>
+
+            <form id="uploadForm" method="POST" enctype="multipart/form-data">
+                <!-- Upload fichier -->
+                <div class="mb-3">
+                    <label for="dataset" class="form-label">Choisir un fichier CSV :</label>
+                    <input type="file" class="form-control" id="dataset" name="dataset" accept=".csv" required>
+                </div>
+
+                <!-- Colonne cible -->
+                <div class="mb-3">
+                    <label for="target" class="form-label">Nom de la colonne cible :</label>
+                    <input type="text" class="form-control" id="target" name="target" placeholder="ex: target" required>
+                </div>
+
+                <!-- Type d’analyse -->
+                <div class="mb-3">
+                    <label for="task_type" class="form-label">Type d’analyse :</label>
+                    <select class="form-select" id="task_type" name="task" required>
+                        <option value="">-- Sélectionner --</option>
+                        <option value="classification">Classification</option>
+                        <option value="regression">Régression</option>
+                    </select>
+                </div>
+
+                <!-- Choix du modèle -->
+                <div class="mb-3">
+                    <label for="model" class="form-label">Modèle à utiliser :</label>
+                    <select class="form-select" id="model" name="model" required>
+                        <option value="">-- Sélectionner --</option>
+                    </select>
+                </div>
+
+                <!-- Message d’alerte -->
+                <div id="modelAlert" class="alert alert-danger d-none text-center" role="alert">
+                    ❌ Le modèle sélectionné ne correspond pas au type d’analyse choisi.
+                </div>
+
+                <!-- Bouton -->
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">🚀 Lancer l’analyse</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const taskTypeSelect = document.getElementById('task_type');
+    const modelSelect = document.getElementById('model');
+    const form = document.getElementById('uploadForm');
+    const alertBox = document.getElementById('modelAlert');
+
+    const models = {
+        classification: [
+            {value: 'random_forest', text: 'Random Forest'},
+            {value: 'xgboost', text: 'XGBoost'},
+            {value: 'logistic_regression', text: 'Régression Logistique'}
+        ],
+        regression: [
+            {value: 'random_forest', text: 'Random Forest'},
+            {value: 'xgboost', text: 'XGBoost'}
+        ]
+    };
+
+    function updateModelOptions() {
+        const selectedTask = taskTypeSelect.value;
+        modelSelect.innerHTML = '<option value="">-- Sélectionner --</option>';
+
+        if (selectedTask && models[selectedTask]) {
+            models[selectedTask].forEach(model => {
+                const option = document.createElement('option');
+                option.value = model.value;
+                option.text = model.text;
+                modelSelect.appendChild(option);
+            });
+        }
+    }
+
+    function validateModelTaskMatch() {
+        const task = taskTypeSelect.value;
+        const model = modelSelect.value;
+
+        const validModels = models[task]?.map(m => m.value) || [];
+
+        if (model && !validModels.includes(model)) {
+            alertBox.classList.remove('d-none');
+            return false;
+        } else {
+            alertBox.classList.add('d-none');
+            return true;
+        }
+    }
+
+    // Change listeners
+    taskTypeSelect.addEventListener('change', () => {
+        updateModelOptions();
+        validateModelTaskMatch();
+    });
+
+    modelSelect.addEventListener('change', () => {
+        validateModelTaskMatch();
+    });
+
+    form.addEventListener('submit', function (e) {
+        if (!validateModelTaskMatch()) {
+            e.preventDefault();
+        }
+    });
+
+    updateModelOptions();
+});
+</script>
+{% endblock %}
