@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block content %}
+            <div class="container-fluid pt-5 bg-primary hero-header">
+        <div class="container pt-5">
+            <div class="row g-5 pt-5">
+                <div class="col-lg-6 align-self-center text-center text-lg-start mb-lg-5">
+                    <h1 class="display-4 text-white mb-4 animated slideInRight">Compare models</h1>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb justify-content-center justify-content-lg-start mb-0">
+                            <li class="breadcrumb-item"><a class="text-white" href="#">Home</a></li>
+                            <li class="breadcrumb-item text-white active" aria-current="page">Compare models</li>
+                        </ol>
+                    </nav>
+                </div>
+                <div class="col-lg-6 align-self-end text-center text-lg-end">
+                    <img class="img-fluid" src="img/hero-img.png" alt="" style="max-height: 300px;">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Hero End -->
+
+
+    <!-- Full Screen Search Start -->
+    <div class="modal fade" id="searchModal" tabindex="-1">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content" style="background: rgba(20, 24, 62, 0.7);">
+                <div class="modal-header border-0">
+                    <button type="button" class="btn btn-square bg-white btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body d-flex align-items-center justify-content-center">
+                    <div class="input-group" style="max-width: 600px;">
+                        <input type="text" class="form-control bg-transparent border-light p-3"
+                            placeholder="Type search keyword">
+                        <button class="btn btn-light px-4"><i class="bi bi-search"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<div class="container mt-4">
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0"><i class="fas fa-balance-scale me-2"></i>Comparaison des Modèles</h3>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info">
+                <strong>Paramètres de comparaison :</strong>
+                <ul class="mb-0">
+                    <li><strong>Type d'analyse :</strong> {{ 'Classification' if task == 'classification' else 'Régression' }}</li>
+                    <li><strong>Fichier :</strong> {{ filename }}</li>
+                    <li><strong>Variable cible :</strong> {{ target }}</li>
+                </ul>
+            </div>
+
+            <h5 class="mt-4 mb-3">Performances des Modèles</h5>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Modèle</th>
+                            <th>{{ 'Précision' if task == 'classification' else 'R²' }}</th>
+                            <th>Rang</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for model in model_scores %}
+                        <tr class="{% if loop.index == 1 %}table-success{% elif loop.index <= 3 %}table-info{% endif %}">
+                            <td>{{ model.model }}</td>
+                            <td>
+                                {% if model.score is not none %}
+                                {{ "%.2f"|format(model.score * 100) }}%
+                                {% else %}
+                                <span class="text-danger">Erreur</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ loop.index }}</td>
+                        </tr>
+                        {% if model.error %}
+                        <tr class="table-warning">
+                            <td colspan="3">
+                                <small class="text-danger"><strong>Erreur :</strong> {{ model.error }}</small>
+                            </td>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-4">
+                <a href="{{ url_for('upload') }}" class="btn btn-primary">
+                    <i class="fas fa-arrow-left me-1"></i> Retour à l'analyse
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

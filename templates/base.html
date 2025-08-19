@@ -1,58 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="description" content="" />
-    <meta name="author" content="" />
-    <title>{% block title %}Heroic Features - Start Bootstrap{% endblock %}</title>
+    <meta charset="utf-8">
+    <title>AI.Tech - {% block title %}{% endblock %}</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='assets/favicon.ico') }}" />
+    <link href="{{ url_for('static', filename='img/favicon.ico') }}" rel="icon">
 
-    <!-- Bootstrap icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Ubuntu:wght@500;700&display=swap" rel="stylesheet">
 
-    <!-- Core theme CSS (includes Bootstrap) -->
-    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet" />
+    <!-- Icon Fonts -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- CSS Libraries -->
+    <link href="{{ url_for('static', filename='lib/animate/animate.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='lib/owlcarousel/assets/owl.carousel.min.css') }}" rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+
+    <style>
+        body {
+            min-height: 100vh;
+            background-color: #f8f9fa;
+        }
+    </style>
 </head>
 <body>
-    <!-- Responsive navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container px-lg-5">
-            <a class="navbar-brand" href="{{ url_for('home') }}">ML Web App</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
-                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" 
-                    aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link {% if request.endpoint == 'home' %}active{% endif %}" href="{{ url_for('home') }}">Home</a></li>
-                    <li class="nav-item"><a class="nav-link {% if request.endpoint == 'upload' %}active{% endif %}" href="{{ url_for('upload') }}">Upload</a></li>
-                    <li class="nav-item"><a class="nav-link {% if request.endpoint == 'visualisations' %}active{% endif %}" href="{{ url_for('visualisations') }}">Visualisations</a></li>
-                    <li class="nav-item"><a class="nav-link {% if request.endpoint == 'contact' %}active{% endif %}" href="{{ url_for('contact') }}">Contact</a></li>
-                </ul>
-            </div>
+    <!-- Spinner -->
+    <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+        <div class="spinner-grow text-primary" style="width: 3rem; height: 3rem;" role="status">
+            <span class="sr-only">Loading...</span>
         </div>
-    </nav>
+    </div>
 
-    <!-- Page-specific content -->
-    <main>
-        {% block content %}
-        {% endblock %}
-    </main>
+    <!-- Navbar -->
+    <div class="container-fluid sticky-top">
+        <div class="container">
+            <nav class="navbar navbar-expand-lg navbar-dark p-0">
+                <a href="{{ url_for('index') }}" class="navbar-brand">
+                    <h1 class="text-white">AI<span class="text-dark">.</span>Tech</h1>
+                </a>
+                <button type="button" class="navbar-toggler ms-auto me-0" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <div class="navbar-nav ms-auto">
+                        <a href="{{ url_for('index') }}" class="nav-item nav-link {{ 'active' if active_page == 'index' }}">Home</a>
+                        <a href="{{ url_for('about') }}" class="nav-item nav-link {{ 'active' if active_page == 'about' }}">About</a>
+                        <a href="{{ url_for('contact') }}" class="nav-item nav-link {{ 'active' if active_page == 'contact' }}">Contact</a>
+                        {% if session.get('user_id') %}
+                            <a href="{{ url_for('upload') }}" class="nav-item nav-link {{ 'active' if active_page == 'upload' }}">Upload</a>
+                            <a href="{{ url_for('history') }}" class="nav-item nav-link {{ 'active' if active_page == 'history' }}">History</a>
+                            <a href="{{ url_for('logout') }}" class="nav-item nav-link">Logout</a>
+                        {% else %}
+                            <a href="{{ url_for('login') }}" class="nav-item nav-link {{ 'active' if active_page == 'login' }}">Login</a>
+                            <a href="{{ url_for('signup') }}" class="nav-item nav-link {{ 'active' if active_page == 'signup' }}">Signup</a>
+                        {% endif %}
+                    </div>
+                </div>
+                <button type="button" class="btn text-white p-0 d-none d-lg-block" data-bs-toggle="modal" data-bs-target="#searchModal">
+                    <i class="fa fa-search"></i>
+                </button>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    {% block content %}{% endblock %}
 
     <!-- Footer -->
-    <footer class="py-5 bg-dark mt-5">
-        <div class="container">
-            <p class="m-0 text-center text-white">Copyright &copy; ML App 2025</p>
+    <div class="container-fluid bg-dark text-white-50 footer pt-5">
+        <div class="container py-5">
+            <div class="row g-5">
+                <div class="col-md-6 col-lg-3">
+                    <a href="{{ url_for('index') }}" class="d-inline-block mb-3">
+                        <h1 class="text-white">AI<span class="text-primary">.</span>Tech</h1>
+                    </a>
+                    <p>Diam dolor diam ipsum sit. Aliqu diam amet diam et eos labore clita.</p>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <h5 class="text-white mb-4">Contact</h5>
+                    <p><i class="fa fa-map-marker-alt me-3"></i>123 Rue, Tunis, Tunisie</p>
+                    <p><i class="fa fa-phone-alt me-3"></i>+216 12 345 678</p>
+                    <p><i class="fa fa-envelope me-3"></i>contact@ai-tech.tn</p>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <h5 class="text-white mb-4">Liens utiles</h5>
+                    <a class="btn btn-link" href="{{ url_for('about') }}">À propos</a>
+                    <a class="btn btn-link" href="{{ url_for('contact') }}">Contact</a>
+                    <a class="btn btn-link" href="#">Politique de confidentialité</a>
+                    <a class="btn btn-link" href="#">Conditions</a>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <h5 class="text-white mb-4">Services</h5>
+                    <a class="btn btn-link" href="#">Machine Learning</a>
+                    <a class="btn btn-link" href="#">Analyse Prédictive</a>
+                    <a class="btn btn-link" href="#">Data Science</a>
+                </div>
+            </div>
         </div>
-    </footer>
+        <div class="container">
+            <div class="text-center text-md-start mb-3 mb-md-0">
+                &copy; 2025 <a class="border-bottom text-white" href="#">AI.Tech</a>. Tous droits réservés.
+            </div>
+        </div>
+    </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top pt-2"><i class="bi bi-arrow-up"></i></a>
+
+    <!-- JS Libraries -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='lib/wow/wow.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/easing/easing.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/waypoints/waypoints.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/counterup/counterup.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/owlcarousel/owl.carousel.min.js') }}"></script>
+
     <!-- Custom JS -->
-    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+    <!-- Spinner Hide + WOW Init -->
+    <script>
+        window.addEventListener("load", function () {
+            const spinner = document.getElementById("spinner");
+            if (spinner) {
+                spinner.classList.remove("show");
+            }
+            new WOW().init();
+        });
+    </script>
 </body>
 </html>
